@@ -17,7 +17,7 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { DialogModule } from 'primeng/dialog';
 import { MessageService } from 'primeng/api';
-import { ClientService } from '../../../service/client.service'; // Importar o ClientService
+import { ClientService } from '../../../service/client.service';
 
 @NgModule({
     imports: [
@@ -39,6 +39,6 @@ import { ClientService } from '../../../service/client.service'; // Importar o C
         DialogModule,
     ],
     declarations: [ClientsComponent],
-    providers: [MessageService, ClientService], // Adicionar ClientService aqui
+    providers: [MessageService, ClientService],
 })
 export class ClientsModule {}

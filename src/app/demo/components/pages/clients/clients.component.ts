@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ClientService } from 'src/app/demo/service/client.service'; // Ajuste o caminho conforme necessário
+import { ClientService } from 'src/app/demo/service/client.service';
 import { MessageService } from 'primeng/api';
 
 @Component({
@@ -24,8 +24,8 @@ export class ClientsComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        this.clientService.getClients().then((resposta) => {
-            this.clients = resposta;
+        this.clientService.getClients().then((data) => {
+            this.clients = data;
         });
 
         this.cols = [
