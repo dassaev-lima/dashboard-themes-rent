@@ -85,7 +85,7 @@ export class AppMenuComponent implements OnInit {
                     {
                         label: 'Endereços',
                         icon: 'pi pi-fw pi-map-marker',
-                        routerLink: ['/pages/address'],
+                        routerLink: ['/pages/addresses'],
                     },
                     /*{
                         label: 'Auth',
