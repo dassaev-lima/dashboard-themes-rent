@@ -4,23 +4,26 @@ import { LayoutService } from './service/app.layout.service';
 
 @Component({
     selector: 'app-menu',
-    templateUrl: './app.menu.component.html'
+    templateUrl: './app.menu.component.html',
 })
 export class AppMenuComponent implements OnInit {
-
     model: any[] = [];
 
-    constructor(public layoutService: LayoutService) { }
+    constructor(public layoutService: LayoutService) {}
 
     ngOnInit() {
         this.model = [
             {
                 label: 'Home',
                 items: [
-                    { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/'] }
-                ]
+                    {
+                        label: 'Dashboard',
+                        icon: 'pi pi-fw pi-home',
+                        routerLink: ['/'],
+                    },
+                ],
             },
-            {
+            /*{
                 label: 'UI Components',
                 items: [
                     { label: 'Form Layout', icon: 'pi pi-fw pi-id-card', routerLink: ['/uikit/formlayout'] },
@@ -54,17 +57,37 @@ export class AppMenuComponent implements OnInit {
                     { label: 'PrimeIcons', icon: 'pi pi-fw pi-prime', routerLink: ['/utilities/icons'] },
                     { label: 'PrimeFlex', icon: 'pi pi-fw pi-desktop', url: ['https://www.primefaces.org/primeflex/'], target: '_blank' },
                 ]
-            },
+            },*/
             {
                 label: 'Pages',
                 icon: 'pi pi-fw pi-briefcase',
                 items: [
                     {
-                        label: 'Landing',
-                        icon: 'pi pi-fw pi-globe',
-                        routerLink: ['/landing']
+                        label: 'Temas',
+                        icon: 'pi pi-fw pi-palette',
+                        routerLink: ['/pages/themes'],
                     },
                     {
+                        label: 'clientes',
+                        icon: 'pi pi-fw pi-users',
+                        routerLink: ['/pages/clients'],
+                    },
+                    {
+                        label: 'Itens',
+                        icon: 'pi pi-fw pi-list',
+                        routerLink: ['/pages/items'],
+                    },
+                    {
+                        label: 'Alugueis',
+                        icon: 'pi pi-fw pi-home',
+                        routerLink: ['/pages/rents'],
+                    },
+                    {
+                        label: 'Endereços',
+                        icon: 'pi pi-fw pi-map-marker',
+                        routerLink: ['/pages/address'],
+                    },
+                    /*{
                         label: 'Auth',
                         icon: 'pi pi-fw pi-user',
                         items: [
@@ -98,16 +121,16 @@ export class AppMenuComponent implements OnInit {
                     {
                         label: 'Not Found',
                         icon: 'pi pi-fw pi-exclamation-circle',
-                        routerLink: ['/notfound']
+                        routerLink: ['/notfound'],
                     },
                     {
                         label: 'Empty',
                         icon: 'pi pi-fw pi-circle-off',
                         routerLink: ['/pages/empty']
-                    },
-                ]
+                    },*/
+                ],
             },
-            {
+            /*{
                 label: 'Hierarchy',
                 items: [
                     {
@@ -159,7 +182,7 @@ export class AppMenuComponent implements OnInit {
                         label: 'View Source', icon: 'pi pi-fw pi-search', url: ['https://github.com/primefaces/sakai-ng'], target: '_blank'
                     }
                 ]
-            }
+            }*/
         ];
     }
 }
