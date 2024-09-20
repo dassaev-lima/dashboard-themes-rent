@@ -1,0 +1,285 @@
+<div class="grid"></div>
+<div class="col-12">
+    <div class="card px-6 py-6">
+        <p-toast></p-toast>
+        <p-toolbar styleClass="mb-4">
+            <ng-template pTemplate="right">
+                <div class="my-2">
+                    <button
+                        pButton
+                        pRipple
+                        label="Novo"
+                        icon="pi pi-plus"
+                        class="p-button-success mr-2"
+                        (click)="openNew()"
+                    ></button>
+                    <button
+                        pButton
+                        pRipple
+                        label="Excluir"
+                        icon="pi pi-trash"
+                        class="p-button-danger"
+                        (click)="deleteSelectedAddresses()"
+                        [disabled]="
+                            !selectedAddresses || !selectedAddresses.length
+                        "
+                    ></button>
+                </div>
+            </ng-template>
+        </p-toolbar>
+
+        <p-table
+            #dt
+            [value]="addresses"
+            [columns]="cols"
+            responsiveLayout="scroll"
+            [rows]="10"
+            [globalFilterFields]="['street', 'city']"
+            [paginator]="true"
+            [rowsPerPageOptions]="[10, 20, 30]"
+            [showCurrentPageReport]="true"
+            currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
+            [(selection)]="selectedAddresses"
+            selectionMode="multiple"
+            [rowHover]="true"
+            dataKey="id"
+        >
+            <ng-template pTemplate="caption">
+                <div
+                    class="flex flex-column md:flex-row md:justify-content-between md:align-items-center"
+                >
+                    <h5 class="m-0">Gerenciar Endereços</h5>
+                    <span class="block mt-2 md:mt-0 p-input-icon-left">
+                        <i class="pi pi-search"></i>
+                        <input
+                            pInputText
+                            type="text"
+                            (input)="onGlobalFilter(dt, $event)"
+                            placeholder="Buscar..."
+                            class="w-full sm:w-auto"
+                        />
+                    </span>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 3rem">
+                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                    </th>
+                    <th pSortableColumn="id">
+                        ID <p-sortIcon field="id"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="street">
+                        Rua <p-sortIcon field="street"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="number">
+                        Número <p-sortIcon field="number"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="city">
+                        Cidade <p-sortIcon field="city"></p-sortIcon>
+                    </th>
+                    <th></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-address>
+                <tr>
+                    <td>
+                        <p-tableCheckbox [value]="address"></p-tableCheckbox>
+                    </td>
+                    <td>{{ address.id }}</td>
+                    <td>{{ address.street }}</td>
+                    <td>{{ address.number }}</td>
+                    <td>{{ address.city }}</td>
+                    <td>
+                        <div class="flex">
+                            <button
+                                pButton
+                                pRipple
+                                icon="pi pi-pencil"
+                                class="p-button-rounded p-button-success mr-2"
+                                (click)="editAddress(address)"
+                            ></button>
+                            <button
+                                pButton
+                                pRipple
+                                icon="pi pi-trash"
+                                class="p-button-rounded p-button-warning"
+                                (click)="deleteAddress(address)"
+                            ></button>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+    <p-dialog
+        [(visible)]="addressDialog"
+        [style]="{ width: '450px' }"
+        header="Cadastrar Endereço"
+        [modal]="true"
+        class="p-fluid"
+    >
+        <ng-template pTemplate="content">
+            <div class="field">
+                <label for="street">Rua</label>
+                <input
+                    type="text"
+                    pInputText
+                    id="street"
+                    [(ngModel)]="address.street"
+                    required
+                />
+            </div>
+            <div class="field">
+                <label for="number">Número</label>
+                <input
+                    type="number"
+                    pInputText
+                    id="number"
+                    [(ngModel)]="address.number"
+                    required
+                />
+            </div>
+            <div class="field">
+                <label for="complement">Complemento</label>
+                <input
+                    type="text"
+                    pInputText
+                    id="complement"
+                    [(ngModel)]="address.complement"
+                />
+            </div>
+            <div class="field">
+                <label for="district">Bairro</label>
+                <input
+                    type="text"
+                    pInputText
+                    id="district"
+                    [(ngModel)]="address.district"
+                    required
+                />
+            </div>
+            <div class="field">
+                <label for="city">Cidade</label>
+                <input
+                    type="text"
+                    pInputText
+                    id="city"
+                    [(ngModel)]="address.city"
+                    required
+                />
+            </div>
+            <div class="field">
+                <label for="state">Estado</label>
+                <input
+                    type="text"
+                    pInputText
+                    id="state"
+                    [(ngModel)]="address.state"
+                    required
+                />
+            </div>
+        </ng-template>
+        <ng-template pTemplate="footer">
+            <div class="p-d-flex p-jc-end">
+                <button
+                    pButton
+                    type="button"
+                    label="Cancelar"
+                    icon="pi pi-times"
+                    (click)="hideDialog()"
+                ></button>
+                <button
+                    pButton
+                    type="button"
+                    label="Salvar"
+                    icon="pi pi-check"
+                    class="p-button-success"
+                    (click)="saveAddress()"
+                ></button>
+            </div>
+        </ng-template>
+    </p-dialog>
+
+    <p-dialog
+        [(visible)]="deleteAddressDialog"
+        [style]="{ width: '350px' }"
+        header="Confirmar"
+        modal="modal"
+        [closable]="false"
+    >
+        <ng-template pTemplate="content">
+            <div class="confirmation-content">
+                <i
+                    class="pi pi-exclamation-triangle p-mr-3"
+                    style="font-size: 2rem"
+                ></i>
+                <span
+                    >Tem certeza de que deseja excluir
+                    <b>{{ address.street }}</b
+                    >?</span
+                >
+            </div>
+        </ng-template>
+        <ng-template pTemplate="footer">
+            <div class="p-d-flex p-jc-end">
+                <button
+                    pButton
+                    type="button"
+                    label="Não"
+                    icon="pi pi-times"
+                    (click)="hideDialog()"
+                ></button>
+                <button
+                    pButton
+                    type="button"
+                    label="Sim"
+                    icon="pi pi-check"
+                    class="p-button-danger"
+                    (click)="confirmDelete()"
+                ></button>
+            </div>
+        </ng-template>
+    </p-dialog>
+
+    <p-dialog
+        [(visible)]="deleteAddressesDialog"
+        [style]="{ width: '350px' }"
+        header="Confirmar"
+        modal="modal"
+        [closable]="false"
+    >
+        <ng-template pTemplate="content">
+            <div class="confirmation-content">
+                <i
+                    class="pi pi-exclamation-triangle p-mr-3"
+                    style="font-size: 2rem"
+                ></i>
+                <span
+                    >Tem certeza de que deseja excluir os endereços
+                    selecionados?</span
+                >
+            </div>
+        </ng-template>
+        <ng-template pTemplate="footer">
+            <div class="p-d-flex p-jc-end">
+                <button
+                    pButton
+                    type="button"
+                    label="Não"
+                    icon="pi pi-times"
+                    (click)="hideDialog()"
+                ></button>
+                <button
+                    pButton
+                    type="button"
+                    label="Sim"
+                    icon="pi pi-check"
+                    class="p-button-danger"
+                    (click)="confirmDeleteSelected()"
+                ></button>
+            </div>
+        </ng-template>
+    </p-dialog>
+</div>
