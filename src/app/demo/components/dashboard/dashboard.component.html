@@ -1,4 +1,4 @@
-    <div class="grid">
+<!--    <div class="grid">
         <div class="col-12 lg:col-6 xl:col-3">
             <div class="card mb-0">
                 <div class="flex justify-content-between mb-3">
@@ -235,5 +235,217 @@
            </div>
         </div>
     </div>
-</div>
+</div>-->
+<div class="grid">
+    <!-- Quantidade de Clientes Cadastrados -->
+    <div class="col-12 lg:col-6 xl:col-3">
+        <div class="card mb-0">
+            <div class="flex justify-content-between mb-3">
+                <div>
+                    <span class="block text-500 font-medium mb-3"
+                        >Clientes Cadastrados</span
+                    >
+                    <div class="text-900 font-medium text-xl">
+                        {{ totalClients }}
+                    </div>
+                </div>
+                <div
+                    class="flex align-items-center justify-content-center bg-blue-100 border-round"
+                    style="width: 2.5rem; height: 2.5rem"
+                >
+                    <i class="pi pi-users text-blue-500 text-xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <!-- Quantidade de Temas Cadastrados -->
+    <div class="col-12 lg:col-6 xl:col-3">
+        <div class="card mb-0">
+            <div class="flex justify-content-between mb-3">
+                <div>
+                    <span class="block text-500 font-medium mb-3"
+                        >Temas Cadastrados</span
+                    >
+                    <div class="text-900 font-medium text-xl">
+                        {{ totalThemes }}
+                    </div>
+                </div>
+                <div
+                    class="flex align-items-center justify-content-center bg-green-100 border-round"
+                    style="width: 2.5rem; height: 2.5rem"
+                >
+                    <i class="pi pi-palette text-green-500 text-xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quantidade de Aluguéis Efetuados -->
+    <div class="col-12 lg:col-6 xl:col-3">
+        <div class="card mb-0">
+            <div class="flex justify-content-between mb-3">
+                <div>
+                    <span class="block text-500 font-medium mb-3"
+                        >Aluguéis Efetuados</span
+                    >
+                    <div class="text-900 font-medium text-xl">
+                        {{ totalRents }}
+                    </div>
+                </div>
+                <div
+                    class="flex align-items-center justify-content-center bg-purple-100 border-round"
+                    style="width: 2.5rem; height: 2.5rem"
+                >
+                    <i class="pi pi-calendar text-purple-500 text-xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Faturamento Total de Aluguéis -->
+    <div class="col-12 lg:col-6 xl:col-3">
+        <div class="card mb-0">
+            <div class="flex justify-content-between mb-3">
+                <div>
+                    <span class="block text-500 font-medium mb-3"
+                        >Faturamento Total</span
+                    >
+                    <div class="text-900 font-medium text-xl">
+                        R$ {{ totalRevenue | currency : "BRL" }}
+                    </div>
+                </div>
+                <div
+                    class="flex align-items-center justify-content-center bg-yellow-100 border-round"
+                    style="width: 2.5rem; height: 2.5rem"
+                >
+                    <i class="pi pi-money-bill text-yellow-500 text-xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtro por Mês e Ano 
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="flex justify-content-between align-items-center">
+                <h5>Filtrar Faturamento</h5>
+                <div class="flex">
+                    <div class="p-field mr-3">
+                        <label for="month">Mês</label>
+                        <select
+                            id="month"
+                            [(ngModel)]="selectedMonth"
+                            class="p-inputtext"
+                        >
+                            <option
+                                *ngFor="let month of months"
+                                [value]="month.value"
+                            >
+                                {{ month.label }}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="p-field">
+                        <label for="year">Ano</label>
+                        <select
+                            id="year"
+                            [(ngModel)]="selectedYear"
+                            class="p-inputtext"
+                        >
+                            <option *ngFor="let year of years" [value]="year">
+                                {{ year }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>-->
+
+    <div class="col-12 lg:col-6 xl:col-6">
+        <div class="card">
+            <h5>Top 5 Clientes que Mais Alugaram</h5>
+            <p-table
+                [value]="topClients"
+                [rows]="5"
+                responsiveLayout="scroll"
+                [paginator]="true"
+                [rowsPerPageOptions]="[5, 10, 20]"
+                [showCurrentPageReport]="true"
+                currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
+            >
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="name">
+                            Cliente <p-sortIcon field="name"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="rentCount">
+                            Quantidade de Aluguéis
+                            <p-sortIcon field="rentCount"></p-sortIcon>
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-client>
+                    <tr>
+                        <td>{{ client.name }}</td>
+                        <td>{{ client.rentCount }}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+
+    <div class="col-12 lg:col-6 xl:col-6">
+        <div class="card">
+            <h5>Top 5 Temas Mais Alugados</h5>
+            <p-table
+                [value]="topThemes"
+                [rows]="5"
+                responsiveLayout="scroll"
+                [paginator]="true"
+                [rowsPerPageOptions]="[5, 10, 20]"
+                [showCurrentPageReport]="true"
+                currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
+            >
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="name">
+                            Tema <p-sortIcon field="name"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="rentCount">
+                            Quantidade de Aluguéis
+                            <p-sortIcon field="rentCount"></p-sortIcon>
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-theme>
+                    <tr>
+                        <td>{{ theme.name }}</td>
+                        <td>{{ theme.rentCount }}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+    <div class="col-12 lg:col-6 xl:col-6">
+        <div class="card">
+            <h5>Quantidade de Temas Alugados no Período</h5>
+            <p-chart
+                type="line"
+                [data]="chartData"
+                [options]="chartOptions"
+            ></p-chart>
+        </div>
+    </div>
+    <div class="col-12 lg:col-6 xl:col-6">
+        <div class="card">
+            <h5>Receita Mensal</h5>
+            <p-chart
+                type="line"
+                [data]="revenueChartData"
+                [options]="revenueChartOptions"
+            ></p-chart>
+        </div>
+    </div>
+</div>

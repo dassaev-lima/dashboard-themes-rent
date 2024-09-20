@@ -3,7 +3,7 @@
     <div class="card px-6 py-6">
         <p-toast></p-toast>
         <p-toolbar styleClass="mb-4">
-            <ng-template pTemplate="right">
+            <ng-template pTemplate="left">
                 <div class="my-2">
                     <button
                         pButton
@@ -19,44 +19,25 @@
                         label="Excluir"
                         icon="pi pi-trash"
                         class="p-button-danger"
-                        (click)="deleteSelectedClients()"
-                        [disabled]="!selectedClients || !selectedClients.length"
+                        (click)="deleteSelectedThemes()"
+                        [disabled]="!selectedThemes || !selectedThemes.length"
                     ></button>
                 </div>
             </ng-template>
-
-            <!--<ng-template pTemplate="right">
-                <p-fileUpload
-                    mode="basic"
-                    accept="image/*"
-                    [maxFileSize]="1000000"
-                    label="Importar"
-                    chooseLabel="Importar"
-                    class="mr-2 inline-block"
-                ></p-fileUpload>
-                <button
-                    pButton
-                    pRipple
-                    label="Exportar"
-                    icon="pi pi-upload"
-                    class="p-button-help"
-                    (click)="dt.exportCSV()"
-                ></button>
-            </ng-template>-->
         </p-toolbar>
 
         <p-table
             #dt
-            [value]="clients"
+            [value]="themes"
             [columns]="cols"
             responsiveLayout="scroll"
             [rows]="10"
-            [globalFilterFields]="['nome', 'email']"
+            [globalFilterFields]="['name', 'color']"
             [paginator]="true"
             [rowsPerPageOptions]="[10, 20, 30]"
             [showCurrentPageReport]="true"
             currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
-            [(selection)]="selectedClients"
+            [(selection)]="selectedThemes"
             selectionMode="multiple"
             [rowHover]="true"
             dataKey="id"
@@ -65,7 +46,7 @@
                 <div
                     class="flex flex-column md:flex-row md:justify-content-between md:align-items-center"
                 >
-                    <h5 class="m-0">Gerenciar Clients</h5>
+                    <h5 class="m-0">Gerenciar Temas</h5>
                     <span class="block mt-2 md:mt-0 p-input-icon-left">
                         <i class="pi pi-search"></i>
                         <input
@@ -89,20 +70,24 @@
                     <th pSortableColumn="name">
                         Nome <p-sortIcon field="name"></p-sortIcon>
                     </th>
-                    <th pSortableColumn="email">
-                        Email <p-sortIcon field="email"></p-sortIcon>
+                    <th pSortableColumn="color">
+                        Cor <p-sortIcon field="color"></p-sortIcon>
                     </th>
-                    <th></th>
+                    <th pSortableColumn="price">
+                        Preço <p-sortIcon field="price"></p-sortIcon>
+                    </th>
+                    <th>Ações</th>
                 </tr>
             </ng-template>
-            <ng-template pTemplate="body" let-client>
+            <ng-template pTemplate="body" let-theme>
                 <tr>
                     <td>
-                        <p-tableCheckbox [value]="client"></p-tableCheckbox>
+                        <p-tableCheckbox [value]="theme"></p-tableCheckbox>
                     </td>
-                    <td>{{ client.id }}</td>
-                    <td>{{ client.name }}</td>
-                    <td>{{ client.email }}</td>
+                    <td>{{ theme.id }}</td>
+                    <td>{{ theme.name }}</td>
+                    <td>{{ theme.color }}</td>
+                    <td>{{ theme.price }}</td>
                     <td>
                         <div class="flex">
                             <button
@@ -110,14 +95,14 @@
                                 pRipple
                                 icon="pi pi-pencil"
                                 class="p-button-rounded p-button-success mr-2"
-                                (click)="editClient(client)"
+                                (click)="editTheme(theme)"
                             ></button>
                             <button
                                 pButton
                                 pRipple
                                 icon="pi pi-trash"
                                 class="p-button-rounded p-button-warning"
-                                (click)="deleteClient(client)"
+                                (click)="deleteTheme(theme)"
                             ></button>
                         </div>
                     </td>
@@ -127,33 +112,60 @@
     </div>
 
     <p-dialog
-        [(visible)]="clientDialog"
+        [(visible)]="themeDialog"
         [style]="{ width: '450px' }"
-        header="Cadastrar Cliente"
+        header="Cadastrar Tema"
         [modal]="true"
         class="p-fluid"
     >
         <ng-template pTemplate="content">
             <div class="field">
-                <label for="nome">Nome</label>
+                <label for="name">Nome</label>
                 <input
                     type="text"
                     pInputText
-                    id="nome"
-                    [(ngModel)]="client.name"
+                    id="name"
+                    [(ngModel)]="theme.name"
                     required
                 />
             </div>
             <div class="field">
-                <label for="email">Email</label>
+                <label for="color">Cor</label>
                 <input
                     type="text"
                     pInputText
-                    id="email"
-                    [(ngModel)]="client.email"
+                    id="color"
+                    [(ngModel)]="theme.color"
                     required
-                    email
                 />
+            </div>
+            <div class="field">
+                <label for="price">Preço</label>
+                <input
+                    type="number"
+                    pInputText
+                    id="price"
+                    [(ngModel)]="theme.price"
+                    required
+                />
+            </div>
+
+            <div class="field">
+                <label for="itens">Itens Tema</label>
+                <p-multiSelect
+                    [options]="items"
+                    [(ngModel)]="selectedItems"
+                    optionLabel="name"
+                    placeholder="Selecione os itens"
+                    display="chip"
+                    [style]="{ width: '100%' }"
+                    [panelStyle]="{
+                        'max-height': '200px',
+                        'overflow-y': 'auto'
+                    }"
+                    appendTo="body"
+                >
+                </p-multiSelect>
             </div>
         </ng-template>
         <ng-template pTemplate="footer">
@@ -171,14 +183,14 @@
                     label="Salvar"
                     icon="pi pi-check"
                     class="p-button-success"
-                    (click)="saveClient()"
+                    (click)="saveTheme()"
                 ></button>
             </div>
         </ng-template>
     </p-dialog>
 
     <p-dialog
-        [(visible)]="deleteClientDialog"
+        [(visible)]="deleteThemeDialog"
         [style]="{ width: '350px' }"
         header="Confirmar"
         modal="modal"
@@ -191,7 +203,8 @@
                     style="font-size: 2rem"
                 ></i>
                 <span
-                    >Tem certeza de que deseja excluir <b>{{ client.name }}</b
+                    >Tem certeza de que deseja excluir o tema
+                    <b>{{ theme.name }}</b
                     >?</span
                 >
             </div>
@@ -218,7 +231,7 @@
     </p-dialog>
 
     <p-dialog
-        [(visible)]="deleteClientsDialog"
+        [(visible)]="deleteThemesDialog"
         [style]="{ width: '350px' }"
         header="Confirmar"
         modal="modal"
@@ -231,7 +244,7 @@
                     style="font-size: 2rem"
                 ></i>
                 <span
-                    >Tem certeza de que deseja excluir os clients
+                    >Tem certeza de que deseja excluir os temas
                     selecionados?</span
                 >
             </div>

@@ -19,44 +19,25 @@
                         label="Excluir"
                         icon="pi pi-trash"
                         class="p-button-danger"
-                        (click)="deleteSelectedClients()"
-                        [disabled]="!selectedClients || !selectedClients.length"
+                        (click)="deleteSelectedRents()"
+                        [disabled]="!selectedRents || !selectedRents.length"
                     ></button>
                 </div>
             </ng-template>
-
-            <!--<ng-template pTemplate="right">
-                <p-fileUpload
-                    mode="basic"
-                    accept="image/*"
-                    [maxFileSize]="1000000"
-                    label="Importar"
-                    chooseLabel="Importar"
-                    class="mr-2 inline-block"
-                ></p-fileUpload>
-                <button
-                    pButton
-                    pRipple
-                    label="Exportar"
-                    icon="pi pi-upload"
-                    class="p-button-help"
-                    (click)="dt.exportCSV()"
-                ></button>
-            </ng-template>-->
         </p-toolbar>
 
         <p-table
             #dt
-            [value]="clients"
+            [value]="rents"
             [columns]="cols"
             responsiveLayout="scroll"
             [rows]="10"
-            [globalFilterFields]="['nome', 'email']"
+            [globalFilterFields]="['date', 'client', 'theme']"
             [paginator]="true"
             [rowsPerPageOptions]="[10, 20, 30]"
             [showCurrentPageReport]="true"
             currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
-            [(selection)]="selectedClients"
+            [(selection)]="selectedRents"
             selectionMode="multiple"
             [rowHover]="true"
             dataKey="id"
@@ -65,7 +46,7 @@
                 <div
                     class="flex flex-column md:flex-row md:justify-content-between md:align-items-center"
                 >
-                    <h5 class="m-0">Gerenciar Clients</h5>
+                    <h5 class="m-0">Gerenciar Aluguéis</h5>
                     <span class="block mt-2 md:mt-0 p-input-icon-left">
                         <i class="pi pi-search"></i>
                         <input
@@ -86,23 +67,40 @@
                     <th pSortableColumn="id">
                         ID <p-sortIcon field="id"></p-sortIcon>
                     </th>
-                    <th pSortableColumn="name">
-                        Nome <p-sortIcon field="name"></p-sortIcon>
+                    <th pSortableColumn="date">
+                        Data <p-sortIcon field="date"></p-sortIcon>
                     </th>
-                    <th pSortableColumn="email">
-                        Email <p-sortIcon field="email"></p-sortIcon>
+                    <th pSortableColumn="start_hours">
+                        Início <p-sortIcon field="start_hours"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="end_hours">
+                        Fim <p-sortIcon field="end_hours"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="client">
+                        Cliente <p-sortIcon field="client"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="theme">
+                        Tema <p-sortIcon field="theme"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="address">
+                        Endereço <p-sortIcon field="address"></p-sortIcon>
                     </th>
                     <th></th>
                 </tr>
             </ng-template>
-            <ng-template pTemplate="body" let-client>
+            <ng-template pTemplate="body" let-rent>
                 <tr>
                     <td>
-                        <p-tableCheckbox [value]="client"></p-tableCheckbox>
+                        <p-tableCheckbox [value]="rent"></p-tableCheckbox>
                     </td>
-                    <td>{{ client.id }}</td>
-                    <td>{{ client.name }}</td>
-                    <td>{{ client.email }}</td>
+                    <td>{{ rent.id }}</td>
+                    <td>{{ rent.date | date : "dd/MM/yyyy" }}</td>
+                    <!-- Formatação da data -->
+                    <td>{{ rent.start_hours }}</td>
+                    <td>{{ rent.end_hours }}</td>
+                    <td>{{ rent.client }}</td>
+                    <td>{{ rent.theme }}</td>
+                    <td>{{ rent.address }}</td>
                     <td>
                         <div class="flex">
                             <button
@@ -110,14 +108,14 @@
                                 pRipple
                                 icon="pi pi-pencil"
                                 class="p-button-rounded p-button-success mr-2"
-                                (click)="editClient(client)"
+                                (click)="editRent(rent)"
                             ></button>
                             <button
                                 pButton
                                 pRipple
                                 icon="pi pi-trash"
                                 class="p-button-rounded p-button-warning"
-                                (click)="deleteClient(client)"
+                                (click)="deleteRent(rent)"
                             ></button>
                         </div>
                     </td>
@@ -126,33 +124,74 @@
         </p-table>
     </div>
 
+    <!-- Modal de criação e edição -->
     <p-dialog
-        [(visible)]="clientDialog"
+        [(visible)]="rentDialog"
         [style]="{ width: '450px' }"
-        header="Cadastrar Cliente"
+        header="{{ rent?.id ? 'Editar Aluguel' : 'Cadastrar Aluguel' }}"
         [modal]="true"
         class="p-fluid"
     >
         <ng-template pTemplate="content">
             <div class="field">
-                <label for="nome">Nome</label>
+                <label for="text">Data</label>
                 <input
                     type="text"
                     pInputText
-                    id="nome"
-                    [(ngModel)]="client.name"
+                    id="date"
+                    [(ngModel)]="rent.date"
+                    required
+                    autofocus
+                />
+            </div>
+            <div class="field">
+                <label for="start_hours">Início</label>
+                <input
+                    type="text"
+                    pInputText
+                    id="start_hours"
+                    [(ngModel)]="rent.start_hours"
                     required
                 />
             </div>
             <div class="field">
-                <label for="email">Email</label>
+                <label for="end_hours">Fim</label>
                 <input
                     type="text"
                     pInputText
-                    id="email"
-                    [(ngModel)]="client.email"
+                    id="end_hours"
+                    [(ngModel)]="rent.end_hours"
                     required
-                    email
+                />
+            </div>
+            <div class="field">
+                <label for="client">Cliente</label>
+                <input
+                    type="number"
+                    pInputText
+                    id="client"
+                    [(ngModel)]="rent.client"
+                    required
+                />
+            </div>
+            <div class="field">
+                <label for="theme">Tema</label>
+                <input
+                    type="number"
+                    pInputText
+                    id="theme"
+                    [(ngModel)]="rent.theme"
+                    required
+                />
+            </div>
+            <div class="field">
+                <label for="address">Endereço</label>
+                <input
+                    type="number"
+                    pInputText
+                    id="address"
+                    [(ngModel)]="rent.address"
+                    required
                 />
             </div>
         </ng-template>
@@ -168,17 +207,18 @@
                 <button
                     pButton
                     type="button"
-                    label="Salvar"
+                    label="{{ rent?.id ? 'Atualizar' : 'Salvar' }}"
                     icon="pi pi-check"
                     class="p-button-success"
-                    (click)="saveClient()"
+                    (click)="saveRent()"
                 ></button>
             </div>
         </ng-template>
     </p-dialog>
 
+    <!-- Modal de confirmação de exclusão de aluguel -->
     <p-dialog
-        [(visible)]="deleteClientDialog"
+        [(visible)]="deleteRentDialog"
         [style]="{ width: '350px' }"
         header="Confirmar"
         modal="modal"
@@ -191,7 +231,8 @@
                     style="font-size: 2rem"
                 ></i>
                 <span
-                    >Tem certeza de que deseja excluir <b>{{ client.name }}</b
+                    >Tem certeza de que deseja excluir o aluguel de
+                    <b>{{ rent.client }}</b
                     >?</span
                 >
             </div>
@@ -217,8 +258,9 @@
         </ng-template>
     </p-dialog>
 
+    <!-- Modal de confirmação de exclusão de múltiplos aluguéis -->
     <p-dialog
-        [(visible)]="deleteClientsDialog"
+        [(visible)]="deleteRentsDialog"
         [style]="{ width: '350px' }"
         header="Confirmar"
         modal="modal"
@@ -231,7 +273,7 @@
                     style="font-size: 2rem"
                 ></i>
                 <span
-                    >Tem certeza de que deseja excluir os clients
+                    >Tem certeza de que deseja excluir os aluguéis
                     selecionados?</span
                 >
             </div>

@@ -19,44 +19,27 @@
                         label="Excluir"
                         icon="pi pi-trash"
                         class="p-button-danger"
-                        (click)="deleteSelectedClients()"
-                        [disabled]="!selectedClients || !selectedClients.length"
+                        (click)="deleteSelectedAddresses()"
+                        [disabled]="
+                            !selectedAddresses || !selectedAddresses.length
+                        "
                     ></button>
                 </div>
             </ng-template>
-
-            <!--<ng-template pTemplate="right">
-                <p-fileUpload
-                    mode="basic"
-                    accept="image/*"
-                    [maxFileSize]="1000000"
-                    label="Importar"
-                    chooseLabel="Importar"
-                    class="mr-2 inline-block"
-                ></p-fileUpload>
-                <button
-                    pButton
-                    pRipple
-                    label="Exportar"
-                    icon="pi pi-upload"
-                    class="p-button-help"
-                    (click)="dt.exportCSV()"
-                ></button>
-            </ng-template>-->
         </p-toolbar>
 
         <p-table
             #dt
-            [value]="clients"
+            [value]="addresses"
             [columns]="cols"
             responsiveLayout="scroll"
             [rows]="10"
-            [globalFilterFields]="['nome', 'email']"
+            [globalFilterFields]="['street', 'city']"
             [paginator]="true"
             [rowsPerPageOptions]="[10, 20, 30]"
             [showCurrentPageReport]="true"
             currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
-            [(selection)]="selectedClients"
+            [(selection)]="selectedAddresses"
             selectionMode="multiple"
             [rowHover]="true"
             dataKey="id"
@@ -65,7 +48,7 @@
                 <div
                     class="flex flex-column md:flex-row md:justify-content-between md:align-items-center"
                 >
-                    <h5 class="m-0">Gerenciar Clients</h5>
+                    <h5 class="m-0">Gerenciar Endereços</h5>
                     <span class="block mt-2 md:mt-0 p-input-icon-left">
                         <i class="pi pi-search"></i>
                         <input
@@ -86,23 +69,27 @@
                     <th pSortableColumn="id">
                         ID <p-sortIcon field="id"></p-sortIcon>
                     </th>
-                    <th pSortableColumn="name">
-                        Nome <p-sortIcon field="name"></p-sortIcon>
+                    <th pSortableColumn="street">
+                        Rua <p-sortIcon field="street"></p-sortIcon>
                     </th>
-                    <th pSortableColumn="email">
-                        Email <p-sortIcon field="email"></p-sortIcon>
+                    <th pSortableColumn="number">
+                        Número <p-sortIcon field="number"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="city">
+                        Cidade <p-sortIcon field="city"></p-sortIcon>
                     </th>
                     <th></th>
                 </tr>
             </ng-template>
-            <ng-template pTemplate="body" let-client>
+            <ng-template pTemplate="body" let-address>
                 <tr>
                     <td>
-                        <p-tableCheckbox [value]="client"></p-tableCheckbox>
+                        <p-tableCheckbox [value]="address"></p-tableCheckbox>
                     </td>
-                    <td>{{ client.id }}</td>
-                    <td>{{ client.name }}</td>
-                    <td>{{ client.email }}</td>
+                    <td>{{ address.id }}</td>
+                    <td>{{ address.street }}</td>
+                    <td>{{ address.number }}</td>
+                    <td>{{ address.city }}</td>
                     <td>
                         <div class="flex">
                             <button
@@ -110,14 +97,14 @@
                                 pRipple
                                 icon="pi pi-pencil"
                                 class="p-button-rounded p-button-success mr-2"
-                                (click)="editClient(client)"
+                                (click)="editAddress(address)"
                             ></button>
                             <button
                                 pButton
                                 pRipple
                                 icon="pi pi-trash"
                                 class="p-button-rounded p-button-warning"
-                                (click)="deleteClient(client)"
+                                (click)="deleteAddress(address)"
                             ></button>
                         </div>
                     </td>
@@ -127,32 +114,70 @@
     </div>
 
     <p-dialog
-        [(visible)]="clientDialog"
+        [(visible)]="addressDialog"
         [style]="{ width: '450px' }"
-        header="Cadastrar Cliente"
+        header="Cadastrar Endereço"
         [modal]="true"
         class="p-fluid"
     >
         <ng-template pTemplate="content">
             <div class="field">
-                <label for="nome">Nome</label>
+                <label for="street">Rua</label>
                 <input
                     type="text"
                     pInputText
-                    id="nome"
-                    [(ngModel)]="client.name"
+                    id="street"
+                    [(ngModel)]="address.street"
                     required
                 />
             </div>
             <div class="field">
-                <label for="email">Email</label>
+                <label for="number">Número</label>
+                <input
+                    type="number"
+                    pInputText
+                    id="number"
+                    [(ngModel)]="address.number"
+                    required
+                />
+            </div>
+            <div class="field">
+                <label for="complement">Complemento</label>
                 <input
                     type="text"
                     pInputText
-                    id="email"
-                    [(ngModel)]="client.email"
+                    id="complement"
+                    [(ngModel)]="address.complement"
+                />
+            </div>
+            <div class="field">
+                <label for="district">Bairro</label>
+                <input
+                    type="text"
+                    pInputText
+                    id="district"
+                    [(ngModel)]="address.district"
                     required
-                    email
+                />
+            </div>
+            <div class="field">
+                <label for="city">Cidade</label>
+                <input
+                    type="text"
+                    pInputText
+                    id="city"
+                    [(ngModel)]="address.city"
+                    required
+                />
+            </div>
+            <div class="field">
+                <label for="state">Estado</label>
+                <input
+                    type="text"
+                    pInputText
+                    id="state"
+                    [(ngModel)]="address.state"
+                    required
                 />
             </div>
         </ng-template>
@@ -171,14 +196,14 @@
                     label="Salvar"
                     icon="pi pi-check"
                     class="p-button-success"
-                    (click)="saveClient()"
+                    (click)="saveAddress()"
                 ></button>
             </div>
         </ng-template>
     </p-dialog>
 
     <p-dialog
-        [(visible)]="deleteClientDialog"
+        [(visible)]="deleteAddressDialog"
         [style]="{ width: '350px' }"
         header="Confirmar"
         modal="modal"
@@ -191,7 +216,8 @@
                     style="font-size: 2rem"
                 ></i>
                 <span
-                    >Tem certeza de que deseja excluir <b>{{ client.name }}</b
+                    >Tem certeza de que deseja excluir
+                    <b>{{ address.street }}</b
                     >?</span
                 >
             </div>
@@ -218,7 +244,7 @@
     </p-dialog>
 
     <p-dialog
-        [(visible)]="deleteClientsDialog"
+        [(visible)]="deleteAddressesDialog"
         [style]="{ width: '350px' }"
         header="Confirmar"
         modal="modal"
@@ -231,7 +257,7 @@
                     style="font-size: 2rem"
                 ></i>
                 <span
-                    >Tem certeza de que deseja excluir os clients
+                    >Tem certeza de que deseja excluir os endereços
                     selecionados?</span
                 >
             </div>

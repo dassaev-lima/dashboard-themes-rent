@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ClientsRoutingModule } from './clients-routing.module';
-import { ClientsComponent } from './clients.component';
+import { AddressRoutingModule } from './addresses-routing.module';
+import { AddressesComponent } from './addresses.component';
 import { TableModule } from 'primeng/table';
 import { FileUploadModule } from 'primeng/fileupload';
 import { ButtonModule } from 'primeng/button';
@@ -17,12 +17,12 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { DialogModule } from 'primeng/dialog';
 import { MessageService } from 'primeng/api';
-import { ClientService } from '../../../service/client.service';
+import { AddressService } from '../../../service/address.service';
 
 @NgModule({
     imports: [
         CommonModule,
-        ClientsRoutingModule,
+        AddressRoutingModule,
         TableModule,
         FileUploadModule,
         FormsModule,
@@ -38,7 +38,7 @@ import { ClientService } from '../../../service/client.service';
         InputNumberModule,
         DialogModule,
     ],
-    declarations: [ClientsComponent],
-    providers: [MessageService, ClientService],
+    declarations: [AddressesComponent],
+    providers: [MessageService, AddressService],
 })
-export class ClientsModule {}
+export class AddressModule {}
