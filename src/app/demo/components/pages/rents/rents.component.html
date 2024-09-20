@@ -1,0 +1,301 @@
+<div class="grid"></div>
+<div class="col-12">
+    <div class="card px-6 py-6">
+        <p-toast></p-toast>
+        <p-toolbar styleClass="mb-4">
+            <ng-template pTemplate="right">
+                <div class="my-2">
+                    <button
+                        pButton
+                        pRipple
+                        label="Novo"
+                        icon="pi pi-plus"
+                        class="p-button-success mr-2"
+                        (click)="openNew()"
+                    ></button>
+                    <button
+                        pButton
+                        pRipple
+                        label="Excluir"
+                        icon="pi pi-trash"
+                        class="p-button-danger"
+                        (click)="deleteSelectedRents()"
+                        [disabled]="!selectedRents || !selectedRents.length"
+                    ></button>
+                </div>
+            </ng-template>
+        </p-toolbar>
+
+        <p-table
+            #dt
+            [value]="rents"
+            [columns]="cols"
+            responsiveLayout="scroll"
+            [rows]="10"
+            [globalFilterFields]="['date', 'client', 'theme']"
+            [paginator]="true"
+            [rowsPerPageOptions]="[10, 20, 30]"
+            [showCurrentPageReport]="true"
+            currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
+            [(selection)]="selectedRents"
+            selectionMode="multiple"
+            [rowHover]="true"
+            dataKey="id"
+        >
+            <ng-template pTemplate="caption">
+                <div
+                    class="flex flex-column md:flex-row md:justify-content-between md:align-items-center"
+                >
+                    <h5 class="m-0">Gerenciar Aluguéis</h5>
+                    <span class="block mt-2 md:mt-0 p-input-icon-left">
+                        <i class="pi pi-search"></i>
+                        <input
+                            pInputText
+                            type="text"
+                            (input)="onGlobalFilter(dt, $event)"
+                            placeholder="Buscar..."
+                            class="w-full sm:w-auto"
+                        />
+                    </span>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 3rem">
+                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                    </th>
+                    <th pSortableColumn="id">
+                        ID <p-sortIcon field="id"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="date">
+                        Data <p-sortIcon field="date"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="start_hours">
+                        Início <p-sortIcon field="start_hours"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="end_hours">
+                        Fim <p-sortIcon field="end_hours"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="client">
+                        Cliente <p-sortIcon field="client"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="theme">
+                        Tema <p-sortIcon field="theme"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="address">
+                        Endereço <p-sortIcon field="address"></p-sortIcon>
+                    </th>
+                    <th></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rent>
+                <tr>
+                    <td>
+                        <p-tableCheckbox [value]="rent"></p-tableCheckbox>
+                    </td>
+                    <td>{{ rent.id }}</td>
+                    <td>{{ rent.date | date : "dd/MM/yyyy" }}</td>
+                    <!-- Formatação da data -->
+                    <td>{{ rent.start_hours }}</td>
+                    <td>{{ rent.end_hours }}</td>
+                    <td>{{ rent.client }}</td>
+                    <td>{{ rent.theme }}</td>
+                    <td>{{ rent.address }}</td>
+                    <td>
+                        <div class="flex">
+                            <button
+                                pButton
+                                pRipple
+                                icon="pi pi-pencil"
+                                class="p-button-rounded p-button-success mr-2"
+                                (click)="editRent(rent)"
+                            ></button>
+                            <button
+                                pButton
+                                pRipple
+                                icon="pi pi-trash"
+                                class="p-button-rounded p-button-warning"
+                                (click)="deleteRent(rent)"
+                            ></button>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+    <!-- Modal de criação e edição -->
+    <p-dialog
+        [(visible)]="rentDialog"
+        [style]="{ width: '450px' }"
+        header="{{ rent?.id ? 'Editar Aluguel' : 'Cadastrar Aluguel' }}"
+        [modal]="true"
+        class="p-fluid"
+    >
+        <ng-template pTemplate="content">
+            <div class="field">
+                <label for="text">Data</label>
+                <input
+                    type="text"
+                    pInputText
+                    id="date"
+                    [(ngModel)]="rent.date"
+                    required
+                    autofocus
+                />
+            </div>
+            <div class="field">
+                <label for="start_hours">Início</label>
+                <input
+                    type="text"
+                    pInputText
+                    id="start_hours"
+                    [(ngModel)]="rent.start_hours"
+                    required
+                />
+            </div>
+            <div class="field">
+                <label for="end_hours">Fim</label>
+                <input
+                    type="text"
+                    pInputText
+                    id="end_hours"
+                    [(ngModel)]="rent.end_hours"
+                    required
+                />
+            </div>
+            <div class="field">
+                <label for="client">Cliente</label>
+                <input
+                    type="number"
+                    pInputText
+                    id="client"
+                    [(ngModel)]="rent.client"
+                    required
+                />
+            </div>
+            <div class="field">
+                <label for="theme">Tema</label>
+                <input
+                    type="number"
+                    pInputText
+                    id="theme"
+                    [(ngModel)]="rent.theme"
+                    required
+                />
+            </div>
+            <div class="field">
+                <label for="address">Endereço</label>
+                <input
+                    type="number"
+                    pInputText
+                    id="address"
+                    [(ngModel)]="rent.address"
+                    required
+                />
+            </div>
+        </ng-template>
+        <ng-template pTemplate="footer">
+            <div class="p-d-flex p-jc-end">
+                <button
+                    pButton
+                    type="button"
+                    label="Cancelar"
+                    icon="pi pi-times"
+                    (click)="hideDialog()"
+                ></button>
+                <button
+                    pButton
+                    type="button"
+                    label="{{ rent?.id ? 'Atualizar' : 'Salvar' }}"
+                    icon="pi pi-check"
+                    class="p-button-success"
+                    (click)="saveRent()"
+                ></button>
+            </div>
+        </ng-template>
+    </p-dialog>
+
+    <!-- Modal de confirmação de exclusão de aluguel -->
+    <p-dialog
+        [(visible)]="deleteRentDialog"
+        [style]="{ width: '350px' }"
+        header="Confirmar"
+        modal="modal"
+        [closable]="false"
+    >
+        <ng-template pTemplate="content">
+            <div class="confirmation-content">
+                <i
+                    class="pi pi-exclamation-triangle p-mr-3"
+                    style="font-size: 2rem"
+                ></i>
+                <span
+                    >Tem certeza de que deseja excluir o aluguel de
+                    <b>{{ rent.client }}</b
+                    >?</span
+                >
+            </div>
+        </ng-template>
+        <ng-template pTemplate="footer">
+            <div class="p-d-flex p-jc-end">
+                <button
+                    pButton
+                    type="button"
+                    label="Não"
+                    icon="pi pi-times"
+                    (click)="hideDialog()"
+                ></button>
+                <button
+                    pButton
+                    type="button"
+                    label="Sim"
+                    icon="pi pi-check"
+                    class="p-button-danger"
+                    (click)="confirmDelete()"
+                ></button>
+            </div>
+        </ng-template>
+    </p-dialog>
+
+    <!-- Modal de confirmação de exclusão de múltiplos aluguéis -->
+    <p-dialog
+        [(visible)]="deleteRentsDialog"
+        [style]="{ width: '350px' }"
+        header="Confirmar"
+        modal="modal"
+        [closable]="false"
+    >
+        <ng-template pTemplate="content">
+            <div class="confirmation-content">
+                <i
+                    class="pi pi-exclamation-triangle p-mr-3"
+                    style="font-size: 2rem"
+                ></i>
+                <span
+                    >Tem certeza de que deseja excluir os aluguéis
+                    selecionados?</span
+                >
+            </div>
+        </ng-template>
+        <ng-template pTemplate="footer">
+            <div class="p-d-flex p-jc-end">
+                <button
+                    pButton
+                    type="button"
+                    label="Não"
+                    icon="pi pi-times"
+                    (click)="hideDialog()"
+                ></button>
+                <button
+                    pButton
+                    type="button"
+                    label="Sim"
+                    icon="pi pi-check"
+                    class="p-button-danger"
+                    (click)="confirmDeleteSelected()"
+                ></button>
+            </div>
+        </ng-template>
+    </p-dialog>
+</div>
