@@ -38,9 +38,7 @@ export class RentsComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        this.rentService.getRents().then((data) => {
-            this.rents = data;
-        });
+        this.loadRentsWithDetails();
 
         this.cols = [
             { field: 'id', header: 'ID' },
@@ -62,6 +60,41 @@ export class RentsComponent implements OnInit {
         });
     }
 
+    async loadRentsWithDetails() {
+        try {
+            const [rents, clients, themes, addresses] = await Promise.all([
+                this.rentService.getRents(),
+                this.clientService.getClients(),
+                this.themeService.getThemes(),
+                this.addressService.getAddresses(),
+            ]);
+
+            this.mapRentsWithDetails(rents, clients, themes, addresses);
+        } catch (error) {
+            console.error('Erro ao carregar os dados:', error);
+        }
+    }
+
+    mapRentsWithDetails(
+        rents: any[],
+        clients: any[],
+        themes: any[],
+        addresses: any[]
+    ): void {
+        this.rents = rents.map((rent) => {
+            const client = clients.find((c) => c.id === rent.client);
+            const theme = themes.find((t) => t.id === rent.theme);
+            const address = addresses.find((a) => a.id === rent.address);
+
+            return {
+                ...rent, // Mantém os dados do rent original
+                clientName: client ? client.name : 'Cliente não encontrado',
+                themeName: theme ? theme.name : 'Tema não encontrado',
+                addressName: address ? address.name : 'Endereço não encontrado',
+            };
+        });
+    }
+
     openNew(): void {
         this.rent = {};
         this.submitted = false;
@@ -77,6 +110,19 @@ export class RentsComponent implements OnInit {
 
     editRent(rent: any): void {
         this.rent = { ...rent };
+
+        this.selectedClient = this.clients.find(
+            (client) => client.id === this.rent.client
+        );
+
+        this.selectedTheme = this.themes.find(
+            (theme) => theme.id === this.rent.theme
+        );
+
+        this.selectedAddress = this.addresses.find(
+            (address) => address.id === this.rent.address
+        );
+
         this.rentDialog = true;
     }
 

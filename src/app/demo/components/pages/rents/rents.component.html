@@ -32,7 +32,7 @@
             [columns]="cols"
             responsiveLayout="scroll"
             [rows]="10"
-            [globalFilterFields]="['date', 'client', 'theme']"
+            [globalFilterFields]="['date', 'client', 'theme', 'address']"
             [paginator]="true"
             [rowsPerPageOptions]="[10, 20, 30]"
             [showCurrentPageReport]="true"
@@ -95,9 +95,9 @@
                     <td>{{ rent.date | date : "dd/MM/yyyy" }}</td>
                     <td>{{ rent.start_hours }}</td>
                     <td>{{ rent.end_hours }}</td>
-                    <td>{{ rent.client }}</td>
-                    <td>{{ rent.theme }}</td>
-                    <td>{{ rent.address }}</td>
+                    <td>{{ rent.clientName }}</td>
+                    <td>{{ rent.themeName }}</td>
+                    <td>{{ rent.addressName }}</td>
                     <td>
                         <div class="flex">
                             <button
