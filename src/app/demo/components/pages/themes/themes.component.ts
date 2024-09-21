@@ -59,11 +59,15 @@ export class ThemesComponent implements OnInit {
         this.theme = {};
         this.submitted = false;
         this.themeDialog = true;
+        this.selectedItems = [];
     }
 
     editTheme(theme: any) {
         this.theme = { ...theme };
         this.themeDialog = true;
+        this.selectedItems = this.items.filter((item) =>
+            theme.itens.includes(item.id)
+        );
     }
 
     deleteTheme(theme: any) {
@@ -110,6 +114,7 @@ export class ThemesComponent implements OnInit {
 
     saveTheme() {
         this.submitted = true;
+        this.theme.itens = this.selectedItems.map((item) => item.id);
 
         if (this.theme.name.trim()) {
             if (this.theme.id) {
@@ -140,5 +145,10 @@ export class ThemesComponent implements OnInit {
                 });
             }
         }
+    }
+
+    onGlobalFilter(table: any, event: Event): void {
+        const valor = (event.target as HTMLInputElement).value;
+        table.filterGlobal(valor, 'contains');
     }
 }

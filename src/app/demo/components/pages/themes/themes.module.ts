@@ -18,6 +18,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { DialogModule } from 'primeng/dialog';
 import { MessageService } from 'primeng/api';
 import { ThemeService } from '../../../service/theme.service';
+import { MultiSelectModule } from 'primeng/multiselect';
 @NgModule({
     imports: [
         CommonModule,
@@ -36,6 +37,7 @@ import { ThemeService } from '../../../service/theme.service';
         RadioButtonModule,
         InputNumberModule,
         DialogModule,
+        MultiSelectModule,
     ],
     declarations: [ThemesComponent],
     providers: [MessageService, ThemeService],

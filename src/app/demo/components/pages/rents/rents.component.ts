@@ -1,11 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { RentService } from 'src/app/demo/service/rent.service';
+import { ClientService } from 'src/app/demo/service/client.service';
+import { ThemeService } from 'src/app/demo/service/theme.service';
+import { AddressService } from 'src/app/demo/service/address.service';
 import { MessageService } from 'primeng/api';
 
 @Component({
     selector: 'app-rents',
     templateUrl: './rents.component.html',
-    providers: [MessageService],
+    providers: [MessageService, ClientService, ThemeService, AddressService],
 })
 export class RentsComponent implements OnInit {
     rentDialog: boolean = false;
@@ -18,15 +21,24 @@ export class RentsComponent implements OnInit {
     submitted: boolean = false;
     cols: any[] = [];
 
+    clients: any[] = [];
+    themes: any[] = [];
+    addresses: any[] = [];
+
+    selectedClient: any = null;
+    selectedTheme: any = null;
+    selectedAddress: any = null;
+
     constructor(
         private rentService: RentService,
-        private messageService: MessageService
+        private messageService: MessageService,
+        private clientService: ClientService,
+        private themeService: ThemeService,
+        private addressService: AddressService
     ) {}
 
     ngOnInit(): void {
-        this.rentService.getRents().then((data) => {
-            this.rents = data;
-        });
+        this.loadRentsWithDetails();
 
         this.cols = [
             { field: 'id', header: 'ID' },
@@ -37,12 +49,59 @@ export class RentsComponent implements OnInit {
             { field: 'theme', header: 'Tema' },
             { field: 'address', header: 'Endereço' },
         ];
+        this.clientService.getClients().then((clients) => {
+            this.clients = clients;
+        });
+        this.themeService.getThemes().then((themes) => {
+            this.themes = themes;
+        });
+        this.addressService.getAddresses().then((addresses) => {
+            this.addresses = addresses;
+        });
+    }
+
+    async loadRentsWithDetails() {
+        try {
+            const [rents, clients, themes, addresses] = await Promise.all([
+                this.rentService.getRents(),
+                this.clientService.getClients(),
+                this.themeService.getThemes(),
+                this.addressService.getAddresses(),
+            ]);
+
+            this.mapRentsWithDetails(rents, clients, themes, addresses);
+        } catch (error) {
+            console.error('Erro ao carregar os dados:', error);
+        }
+    }
+
+    mapRentsWithDetails(
+        rents: any[],
+        clients: any[],
+        themes: any[],
+        addresses: any[]
+    ): void {
+        this.rents = rents.map((rent) => {
+            const client = clients.find((c) => c.id === rent.client);
+            const theme = themes.find((t) => t.id === rent.theme);
+            const address = addresses.find((a) => a.id === rent.address);
+
+            return {
+                ...rent, // Mantém os dados do rent original
+                clientName: client ? client.name : 'Cliente não encontrado',
+                themeName: theme ? theme.name : 'Tema não encontrado',
+                addressName: address ? address.name : 'Endereço não encontrado',
+            };
+        });
     }
 
     openNew(): void {
         this.rent = {};
         this.submitted = false;
         this.rentDialog = true;
+        this.selectedClient = null;
+        this.selectedTheme = null;
+        this.selectedAddress = null;
     }
 
     deleteSelectedRents(): void {
@@ -51,6 +110,19 @@ export class RentsComponent implements OnInit {
 
     editRent(rent: any): void {
         this.rent = { ...rent };
+
+        this.selectedClient = this.clients.find(
+            (client) => client.id === this.rent.client
+        );
+
+        this.selectedTheme = this.themes.find(
+            (theme) => theme.id === this.rent.theme
+        );
+
+        this.selectedAddress = this.addresses.find(
+            (address) => address.id === this.rent.address
+        );
+
         this.rentDialog = true;
     }
 
@@ -100,6 +172,9 @@ export class RentsComponent implements OnInit {
 
     saveRent(): void {
         this.submitted = true;
+        this.rent.client = this.selectedClient.id;
+        this.rent.theme = this.selectedTheme.id;
+        this.rent.address = this.selectedAddress.id;
 
         if (
             this.rent.date?.trim() &&
