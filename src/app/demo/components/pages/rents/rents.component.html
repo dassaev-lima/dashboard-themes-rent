@@ -90,12 +90,9 @@
             </ng-template>
             <ng-template pTemplate="body" let-rent>
                 <tr>
-                    <td>
-                        <p-tableCheckbox [value]="rent"></p-tableCheckbox>
-                    </td>
+                    <td><p-tableCheckbox [value]="rent"></p-tableCheckbox></td>
                     <td>{{ rent.id }}</td>
                     <td>{{ rent.date | date : "dd/MM/yyyy" }}</td>
-                    <!-- Formatação da data -->
                     <td>{{ rent.start_hours }}</td>
                     <td>{{ rent.end_hours }}</td>
                     <td>{{ rent.client }}</td>
@@ -124,75 +121,81 @@
         </p-table>
     </div>
 
-    <!-- Modal de criação e edição -->
     <p-dialog
         [(visible)]="rentDialog"
-        [style]="{ width: '450px' }"
+        [style]="{ width: '600px' }"
         header="{{ rent?.id ? 'Editar Aluguel' : 'Cadastrar Aluguel' }}"
         [modal]="true"
         class="p-fluid"
     >
         <ng-template pTemplate="content">
-            <div class="field">
-                <label for="text">Data</label>
-                <input
-                    type="text"
-                    pInputText
-                    id="date"
-                    [(ngModel)]="rent.date"
-                    required
-                    autofocus
-                />
-            </div>
-            <div class="field">
-                <label for="start_hours">Início</label>
-                <input
-                    type="text"
-                    pInputText
-                    id="start_hours"
-                    [(ngModel)]="rent.start_hours"
-                    required
-                />
-            </div>
-            <div class="field">
-                <label for="end_hours">Fim</label>
-                <input
-                    type="text"
-                    pInputText
-                    id="end_hours"
-                    [(ngModel)]="rent.end_hours"
-                    required
-                />
-            </div>
-            <div class="field">
-                <label for="client">Cliente</label>
-                <input
-                    type="number"
-                    pInputText
-                    id="client"
-                    [(ngModel)]="rent.client"
-                    required
-                />
-            </div>
-            <div class="field">
-                <label for="theme">Tema</label>
-                <input
-                    type="number"
-                    pInputText
-                    id="theme"
-                    [(ngModel)]="rent.theme"
-                    required
-                />
-            </div>
-            <div class="field">
-                <label for="address">Endereço</label>
-                <input
-                    type="number"
-                    pInputText
-                    id="address"
-                    [(ngModel)]="rent.address"
-                    required
-                />
+            <div class="grid">
+                <div class="col-12">
+                    <div class="field">
+                        <label for="date">Data</label>
+                        <input
+                            type="date"
+                            pInputText
+                            id="date"
+                            [(ngModel)]="rent.date"
+                            required
+                            autofocus
+                        />
+                    </div>
+                    <div class="field">
+                        <label for="start_hours">Início</label>
+                        <input
+                            type="time"
+                            pInputText
+                            id="start_hours"
+                            [(ngModel)]="rent.start_hours"
+                            required
+                        />
+                    </div>
+                    <div class="field">
+                        <label for="end_hours">Fim</label>
+                        <input
+                            type="time"
+                            pInputText
+                            id="end_hours"
+                            [(ngModel)]="rent.end_hours"
+                            required
+                        />
+                    </div>
+                    <div class="field">
+                        <label for="client">Cliente</label>
+                        <p-dropdown
+                            id="client"
+                            [(ngModel)]="selectedClient"
+                            [options]="clients"
+                            optionLabel="name"
+                            placeholder="Selecione um cliente"
+                            required
+                        ></p-dropdown>
+                    </div>
+                    <div class="field">
+                        <label for="theme">Tema</label>
+                        <p-dropdown
+                            id="theme"
+                            [(ngModel)]="selectedTheme"
+                            [options]="themes"
+                            optionLabel="name"
+                            placeholder="Selecione um tema"
+                            required
+                        ></p-dropdown>
+                    </div>
+                    <div class="field">
+                        <label for="address">Endereço</label>
+                        <p-dropdown
+                            id="address"
+                            [(ngModel)]="selectedAddress"
+                            [options]="addresses"
+                            optionLabel="street"
+                            placeholder="Selecione um endereço"
+                            required
+                        ></p-dropdown>
+                    </div>
+                </div>
             </div>
         </ng-template>
         <ng-template pTemplate="footer">
@@ -216,7 +219,6 @@
         </ng-template>
     </p-dialog>
 
-    <!-- Modal de confirmação de exclusão de aluguel -->
     <p-dialog
         [(visible)]="deleteRentDialog"
         [style]="{ width: '350px' }"
@@ -258,7 +260,6 @@
         </ng-template>
     </p-dialog>
 
-    <!-- Modal de confirmação de exclusão de múltiplos aluguéis -->
     <p-dialog
         [(visible)]="deleteRentsDialog"
         [style]="{ width: '350px' }"

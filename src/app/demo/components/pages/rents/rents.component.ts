@@ -1,11 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { RentService } from 'src/app/demo/service/rent.service';
+import { ClientService } from 'src/app/demo/service/client.service';
+import { ThemeService } from 'src/app/demo/service/theme.service';
+import { AddressService } from 'src/app/demo/service/address.service';
 import { MessageService } from 'primeng/api';
 
 @Component({
     selector: 'app-rents',
     templateUrl: './rents.component.html',
-    providers: [MessageService],
+    providers: [MessageService, ClientService, ThemeService, AddressService],
 })
 export class RentsComponent implements OnInit {
     rentDialog: boolean = false;
@@ -18,9 +21,20 @@ export class RentsComponent implements OnInit {
     submitted: boolean = false;
     cols: any[] = [];
 
+    clients: any[] = [];
+    themes: any[] = [];
+    addresses: any[] = [];
+
+    selectedClient: any = null;
+    selectedTheme: any = null;
+    selectedAddress: any = null;
+
     constructor(
         private rentService: RentService,
-        private messageService: MessageService
+        private messageService: MessageService,
+        private clientService: ClientService,
+        private themeService: ThemeService,
+        private addressService: AddressService
     ) {}
 
     ngOnInit(): void {
@@ -37,12 +51,24 @@ export class RentsComponent implements OnInit {
             { field: 'theme', header: 'Tema' },
             { field: 'address', header: 'Endereço' },
         ];
+        this.clientService.getClients().then((clients) => {
+            this.clients = clients;
+        });
+        this.themeService.getThemes().then((themes) => {
+            this.themes = themes;
+        });
+        this.addressService.getAddresses().then((addresses) => {
+            this.addresses = addresses;
+        });
     }
 
     openNew(): void {
         this.rent = {};
         this.submitted = false;
         this.rentDialog = true;
+        this.selectedClient = null;
+        this.selectedTheme = null;
+        this.selectedAddress = null;
     }
 
     deleteSelectedRents(): void {
@@ -100,6 +126,9 @@ export class RentsComponent implements OnInit {
 
     saveRent(): void {
         this.submitted = true;
+        this.rent.client = this.selectedClient.id;
+        this.rent.theme = this.selectedTheme.id;
+        this.rent.address = this.selectedAddress.id;
 
         if (
             this.rent.date?.trim() &&
