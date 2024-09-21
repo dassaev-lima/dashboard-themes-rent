@@ -146,4 +146,9 @@ export class ThemesComponent implements OnInit {
             }
         }
     }
+
+    onGlobalFilter(table: any, event: Event): void {
+        const valor = (event.target as HTMLInputElement).value;
+        table.filterGlobal(valor, 'contains');
+    }
 }
